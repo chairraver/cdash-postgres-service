@@ -1,0 +1,11 @@
+FROM postgres:10.2
+
+COPY init-user-db.sh /docker-entrypoint-initdb.d/
+
+RUN localedef -i de_DE -c -f UTF-8 -A /usr/share/locale/locale.alias de_DE.UTF-8 \
+    && cp /usr/share/postgresql/postgresql.conf.sample /usr/share/postgresql/postgresql.conf \
+    && sed -i -e '/listen_address/s/localhost/*/' \
+              -e '/listen_address/s/^#//' \
+	      /usr/share/postgresql/postgresql.conf
+
+ENV LANG de_DE.utf8

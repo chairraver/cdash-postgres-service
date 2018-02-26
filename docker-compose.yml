@@ -1,0 +1,38 @@
+version: '2.0'
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile-pg
+    container_name: postgres
+    hostname: postgres
+    image: postgres:cdash
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD pg-cdash-login
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  cdash:
+    build:
+      context: .
+      dockerfile: Dockerfile-cdash
+      args:
+        APACHE_DOCUMENT_ROOT: /var/www/html/CDash/public
+    container_name: cdash
+    hostname: cdash
+    image: cdash:cdash
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    ports:
+      - 80:80
+
+volumes:
+  pgdata:
+
+# Local Variables:
+# compile-command: "docker-compose build db"
+# End:
